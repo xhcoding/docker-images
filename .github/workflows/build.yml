@@ -1,0 +1,20 @@
+name: build
+on: [ push, pull_request ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: docker-practice/actions-setup-docker@master
+        timeout-minutes: 12
+
+      - name: images
+        run: |
+          docker pull ubuntu:24.04
+          docker save -o ubuntu-24.04.tar ubuntu:24.04
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+            files: ubuntu-24.04.tar
